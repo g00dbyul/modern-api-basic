@@ -20,3 +20,7 @@ spring:
 
 server:
   port: 8080
+
+# 각 API에 명시한 오류 응답만 문서에 표시합니다.
+springdoc:
+  override-with-generic-response: false

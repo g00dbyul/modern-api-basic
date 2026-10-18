@@ -118,4 +118,24 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.errors.name").exists())
                 .andExpect(jsonPath("$.errors.email").exists());
     }
+
+    @Test
+    void exposeApiDocumentation() throws Exception {
+        mockMvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.paths['/api/v1/users'].post.responses['201']").exists())
+                .andExpect(jsonPath("$.paths['/api/v1/users'].post.responses['409'].content['application/json'].schema['$ref']")
+                        .value("#/components/schemas/ErrorResponse"))
+                .andExpect(jsonPath("$.paths['/api/v1/users'].get.parameters[?(@.name == 'page')]").isNotEmpty())
+                .andExpect(jsonPath("$.paths['/api/v1/users'].get.parameters[?(@.name == 'size')]").isNotEmpty())
+                .andExpect(jsonPath("$.paths['/api/v1/users'].get.parameters[?(@.name == 'sort')]").isNotEmpty())
+                .andExpect(jsonPath("$.paths['/api/v1/users/{userId}'].delete.responses['204'].content").doesNotExist());
+    }
+
+    @Test
+    void exposeSwaggerUi() throws Exception {
+        mockMvc.perform(get("/swagger-ui/index.html"))
+                .andExpect(status().isOk());
+    }
+
 }
